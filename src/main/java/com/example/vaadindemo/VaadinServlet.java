@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import com.example.vaadindemo.service.StorageService;
 import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.AbstractApplicationServlet;
 
@@ -12,7 +13,11 @@ public class VaadinServlet extends AbstractApplicationServlet {
 
 	private static final long serialVersionUID = 1L;
 	
-	Application myVaadinApp = new VaadinApp();
+	// Services here
+	StorageService ss = new StorageService();
+	Application myVaadinApp = new VaadinApp(ss);
+	
+	
 
 	@Override
 	protected Application getNewApplication(HttpServletRequest request)
