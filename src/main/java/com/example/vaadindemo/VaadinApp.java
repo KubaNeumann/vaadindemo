@@ -1,102 +1,156 @@
 package com.example.vaadindemo;
 
-import com.example.vaadindemo.domain.Car;
-import com.example.vaadindemo.service.StorageService;
-import com.vaadin.Application;
+import com.example.vaadindemo.domain.Person;
+import com.example.vaadindemo.service.PersonManager;
+import com.vaadin.annotations.Title;
+import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class VaadinApp extends Application {
+@Title("Vaadin Demo App")
+public class VaadinApp extends UI {
 
 	private static final long serialVersionUID = 1L;
 
-	private BeanItemContainer<Car> carContainer = new BeanItemContainer<Car>(Car.class);
-	private Table carsTable = new Table("Cars", carContainer);
-	
-	private Window mainWindow = new Window();
-	private Button addCarButton = new Button("Add car");
-	
-	private Window carFormWindow;
-	
-	private StorageService storageService;
+	private PersonManager personManager = new PersonManager();
 
-	public VaadinApp(StorageService storageService) {
-		this.storageService = storageService;
-	}
-	
-	public StorageService getStorageService() {
-		return storageService;
+	private Person person = new Person("Jasiu", 1967, "Kowalski");
+	private BeanItem<Person> personItem = new BeanItem<Person>(person);
+
+	private BeanItemContainer<Person> persons = new BeanItemContainer<Person>(
+			Person.class);
+
+	private class MyFormWindow extends Window {
+		private static final long serialVersionUID = 1L;
+
+		public MyFormWindow() {
+			setModal(true);
+			center();
+
+			final FormLayout form = new FormLayout();
+			final FieldGroup binder = new FieldGroup(personItem);
+
+			final Button saveBtn = new Button(" Add person ");
+			final Button cancelBtn = new Button(" Anuluj ");
+
+			form.addComponent(binder.buildAndBind("Nazwisko", "lastName"));
+			form.addComponent(binder.buildAndBind("Rok urodzenia", "yob"));
+			form.addComponent(binder.buildAndBind("Imię", "firstName"));
+
+			binder.setBuffered(true);
+
+			binder.getField("lastName").setRequired(true);
+			binder.getField("firstName").setRequired(true);
+
+			VerticalLayout fvl = new VerticalLayout();
+			fvl.setMargin(true);
+			fvl.addComponent(form);
+			
+			HorizontalLayout hl = new HorizontalLayout();
+			hl.addComponent(saveBtn);
+			hl.addComponent(cancelBtn);
+			fvl.addComponent(hl);
+
+			setContent(fvl);
+
+			saveBtn.addClickListener(new ClickListener() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					try {
+						binder.commit();
+					} catch (CommitException e) {
+						e.printStackTrace();
+					}
+
+					personManager.addPerson(person);
+					persons.addAll(personManager.findAll());
+					close();
+				}
+			});
+
+			cancelBtn.addClickListener(new ClickListener() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					binder.discard();
+					close();
+				}
+			});
+		}
 	}
 
 	@Override
-	public void init() {
+	protected void init(VaadinRequest request) {
 
-		initDataSource();
-		updateCarTable();
+		Button addPersonFormBtn = new Button("Add ");
+		Button deletePersonFormBtn = new Button("Delete");
+		Button editPersonFormBtn = new Button("Edit");
 
-		mainWindow.addComponent(carsTable);
+		VerticalLayout vl = new VerticalLayout();
+		setContent(vl);
 
-		carsTable.setSelectable(true);
-		carsTable.setImmediate(true);
-
-		carsTable.addListener(new Table.ValueChangeListener() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				if (carsTable.getValue() != null) {
-					mainWindow.showNotification("" + carsTable.getValue());
-				}
-			}
-		});
-		
-		
-		addCarButton.addListener(new Button.ClickListener() {
+		addPersonFormBtn.addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				
-				if (carFormWindow != null) {
-					mainWindow.removeWindow(carFormWindow);
-				}
-				
-				BeanItem<Car> beanCarItem = new BeanItem<Car>(new Car());
-				CarFormWindowFactory cff  = new CarFormWindowFactory(beanCarItem, VaadinApp.this);
-				
-				carFormWindow = cff.createWindow();
-				mainWindow.addWindow(carFormWindow);
+				addWindow(new MyFormWindow());
 			}
 		});
 
-		mainWindow.addComponent(addCarButton);
-		setMainWindow(mainWindow);
-	}
-	
-	private void initDataSource(){
-		
-		Car c1 = new Car();
-		c1.setId(1L);
-		c1.setMake("Fiat");
-		c1.setModel("Punto");
-		storageService.addCar(c1);
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.addComponent(addPersonFormBtn);
+		hl.addComponent(editPersonFormBtn);
+		hl.addComponent(deletePersonFormBtn);
 
-		Car c2 = new Car();
-		c2.setId(2L);
-		c2.setMake("Ford");
-		c2.setModel("Mondeo");
-		storageService.addCar(c2);
+		final Table personsTable = new Table("Persons", persons);
+		personsTable.setColumnHeader("firstName", "Imię");
+		personsTable.setColumnHeader("lastName", "Nazwisko");
+		personsTable.setColumnHeader("yob", "Rok urodzenia");
+		personsTable.setSelectable(true);
+		personsTable.setImmediate(true);
+
+		personsTable.addValueChangeListener(new Property.ValueChangeListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+
+				Person selectedPerson = (Person) personsTable.getValue();
+				if (selectedPerson == null) {
+					person.setFirstName("");
+					person.setLastName("");
+					person.setYob(0);
+				} else {
+					person.setFirstName(selectedPerson.getFirstName());
+					person.setLastName(selectedPerson.getLastName());
+					person.setYob(selectedPerson.getYob());
+				}
+			}
+		});
+
+		vl.addComponent(hl);
+		vl.addComponent(personsTable);
 	}
-	
-	public void updateCarTable(){
-		carContainer.removeAllItems();
-		carContainer.addAll(storageService.getAllCars());
-	}
+
 }
