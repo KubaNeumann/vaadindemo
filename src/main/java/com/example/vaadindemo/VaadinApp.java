@@ -33,17 +33,37 @@ public class VaadinApp extends UI {
 	private BeanItemContainer<Person> persons = new BeanItemContainer<Person>(
 			Person.class);
 
+	enum Action {
+		EDIT, ADD;
+	}
+
 	private class MyFormWindow extends Window {
 		private static final long serialVersionUID = 1L;
 
-		public MyFormWindow() {
+		private Action action;
+
+		public MyFormWindow(Action act) {
+			this.action = act;
+
 			setModal(true);
 			center();
+			
+			switch (action) {
+			case ADD:
+				setCaption("Dodaj nową osobę");
+				break;
+			case EDIT:
+				setCaption("Edytuj osobę");
+				break;
+			default:
+				break;
+			}
+			
 
 			final FormLayout form = new FormLayout();
 			final FieldGroup binder = new FieldGroup(personItem);
 
-			final Button saveBtn = new Button(" Add person ");
+			final Button saveBtn = new Button(" Dodaj osobę ");
 			final Button cancelBtn = new Button(" Anuluj ");
 
 			form.addComponent(binder.buildAndBind("Nazwisko", "lastName"));
@@ -58,7 +78,7 @@ public class VaadinApp extends UI {
 			VerticalLayout fvl = new VerticalLayout();
 			fvl.setMargin(true);
 			fvl.addComponent(form);
-			
+
 			HorizontalLayout hl = new HorizontalLayout();
 			hl.addComponent(saveBtn);
 			hl.addComponent(cancelBtn);
@@ -74,13 +94,19 @@ public class VaadinApp extends UI {
 				public void buttonClick(ClickEvent event) {
 					try {
 						binder.commit();
+
+						if (action == Action.ADD) {
+							personManager.addPerson(person);
+						} else if (action == Action.EDIT) {
+							personManager.updatePerson(person);
+						}
+
+						persons.removeAllItems();
+						persons.addAll(personManager.findAll());
+						close();
 					} catch (CommitException e) {
 						e.printStackTrace();
 					}
-
-					personManager.addPerson(person);
-					persons.addAll(personManager.findAll());
-					close();
 				}
 			});
 
@@ -113,7 +139,31 @@ public class VaadinApp extends UI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				addWindow(new MyFormWindow());
+				addWindow(new MyFormWindow(Action.ADD));
+			}
+		});
+
+		editPersonFormBtn.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				addWindow(new MyFormWindow(Action.EDIT));
+			}
+		});
+
+		deletePersonFormBtn.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (!person.getFirstName().isEmpty()) {
+					personManager.delete(person);
+					persons.removeAllItems();
+					persons.addAll(personManager.findAll());
+				}
 			}
 		});
 
@@ -141,10 +191,12 @@ public class VaadinApp extends UI {
 					person.setFirstName("");
 					person.setLastName("");
 					person.setYob(0);
+					person.setId(null);
 				} else {
 					person.setFirstName(selectedPerson.getFirstName());
 					person.setLastName(selectedPerson.getLastName());
 					person.setYob(selectedPerson.getYob());
+					person.setId(selectedPerson.getId());
 				}
 			}
 		});

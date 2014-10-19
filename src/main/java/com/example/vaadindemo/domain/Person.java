@@ -1,6 +1,10 @@
 package com.example.vaadindemo.domain;
 
+import java.util.UUID;
+
 public class Person {
+	
+	private UUID id;
 	
 	private String firstName;
 	
@@ -48,4 +52,12 @@ public class Person {
 				+ ", lastName=" + lastName + "]";
 	}
 
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+	
 }
