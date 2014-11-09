@@ -44,7 +44,7 @@ public class PushApp extends UI {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				new UpdateLabelThread(10, myLabel1, "Started 1!").start();
+				new UpdateLabelThread(6, myLabel1, "Started 1!").start();
 			}
 		});
 
@@ -54,7 +54,7 @@ public class PushApp extends UI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				new UpdateLabelThread(5, myLabel2, "Started 2!").start();
+				new UpdateLabelThread(3, myLabel2, "Started 2!").start();
 			}
 		});
 	}
