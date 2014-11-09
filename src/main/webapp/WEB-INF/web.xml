@@ -1,22 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-    <display-name>Vaadin Web Application</display-name>
-    <context-param>
-        <description>Vaadin production mode</description>
-        <param-name>productionMode</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <servlet>
-        <servlet-name>Vaadin</servlet-name>
-        <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
-        <init-param>
-            <description>Vaadin UI to display</description>
-            <param-name>UI</param-name>
-            <param-value>com.example.vaadindemo.VaadinApp</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Vaadin</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
+<web-app id="WebApp_ID" version="3.0"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+	<display-name>Vaadin Web Application</display-name>
+
+	<context-param>
+		<description>Vaadin production mode</description>
+		<param-name>productionMode</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+
+	<servlet>
+		<servlet-name>VaadinCRUD</servlet-name>
+		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<init-param>
+			<description>Vaadin UI to display</description>
+			<param-name>UI</param-name>
+			<param-value>com.example.vaadindemo.VaadinApp</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VaadinCRUD</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+
+ <!--  
+	<servlet>
+		<servlet-name>VaadinPush</servlet-name>
+		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<init-param>
+			<description>Vaadin UI to display</description>
+			<param-name>UI</param-name>
+			<param-value>com.example.vaadindemo.PushApp</param-value>
+		</init-param>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VaadinPush</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+-->
+
+ <!-- 
+	<servlet>
+		<servlet-name>VaadinChat</servlet-name>
+		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<init-param>
+			<description>Vaadin UI to display</description>
+			<param-name>UI</param-name>
+			<param-value>com.example.vaadindemo.ChatApp</param-value>
+		</init-param>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VaadinChat</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+  -->
+
 </web-app>

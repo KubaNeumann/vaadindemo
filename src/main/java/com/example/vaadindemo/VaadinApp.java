@@ -15,6 +15,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -203,6 +204,13 @@ public class VaadinApp extends UI {
 
 		vl.addComponent(hl);
 		vl.addComponent(personsTable);
+		
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		Label label = new Label();
+		horizontalLayout.addComponent(label);
+		label.setValue(UI.getCurrent().toString());
+		
+		vl.addComponent(horizontalLayout);
 	}
 
 }
