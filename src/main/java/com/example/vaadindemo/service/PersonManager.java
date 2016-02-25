@@ -33,7 +33,7 @@ public class PersonManager {
 	}
 
 	public void updatePerson(Person person) {
-		// TODO DOIT YOURSELF
+		// TODO DO IT YOURSELF
 		
 	}
 

@@ -24,7 +24,6 @@ import com.vaadin.ui.Window;
 @Title("Vaadin Demo App")
 public class VaadinApp extends UI {
 
-	private static final long serialVersionUID = 1L;
 
 	private PersonManager personManager = new PersonManager();
 
@@ -35,7 +34,7 @@ public class VaadinApp extends UI {
 			Person.class);
 
 	enum Action {
-		EDIT, ADD;
+		EDIT, ADD
 	}
 
 	private class MyFormWindow extends Window {

@@ -52,7 +52,7 @@ public class ChatApp extends UI implements MessageListener {
 	public void receiveMessage(final MessageData messageData) {
 		
 		access(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				messages.addComponent(new Label(messageData.getAuthor() + ":" + messageData.text));
