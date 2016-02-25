@@ -9,7 +9,7 @@ public class MessageBroadcaster {
 	
 	static ExecutorService executorService = Executors.newSingleThreadExecutor();
 	
-	static List<MessageListener> listeners = new ArrayList<MessageListener>();
+	static List<MessageListener> listeners = new ArrayList<>();
 	
 	public static synchronized void  registerListener(MessageListener listener){
 		listeners.add(listener);
@@ -22,13 +22,7 @@ public class MessageBroadcaster {
 	public static synchronized void broadcast(final MessageData messageData){
 		
 		for (final MessageListener aListener: listeners){
-			executorService.execute(new Runnable() {
-
-				@Override
-				public void run() {
-					aListener.receiveMessage(messageData);
-				}
-			});
+			executorService.execute(() -> aListener.receiveMessage(messageData));
 		}
 	}
 }

@@ -2,18 +2,11 @@ package com.example.vaadindemo;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 @Push
 public class PushApp extends UI {
-
-	private static final long serialVersionUID = 1L;
 
 	private VerticalLayout mainLayout = new VerticalLayout();
 	private Label myLabel1 = new Label("Waiting to start...");
@@ -37,26 +30,9 @@ public class PushApp extends UI {
 		mainLayout.addComponent(myLabel2);
 		mainLayout.addComponent(myButton2);
 
-		myButton1.addClickListener(new ClickListener() {
+		myButton1.addClickListener((ClickListener) event -> new UpdateLabelThread(6, myLabel1, "Started 1!").start());
 
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-
-				new UpdateLabelThread(6, myLabel1, "Started 1!").start();
-			}
-		});
-
-		myButton2.addClickListener(new ClickListener() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				new UpdateLabelThread(3, myLabel2, "Started 2!").start();
-			}
-		});
+		myButton2.addClickListener((ClickListener) event -> new UpdateLabelThread(3, myLabel2, "Started 2!").start());
 	}
 
 	class UpdateLabelThread extends Thread {
@@ -77,12 +53,7 @@ public class PushApp extends UI {
 				Thread.sleep(waitSeconds * 1000);
 			} catch (InterruptedException e) {
 			}
-			access(new Runnable() {
-				@Override
-				public void run() {
-					label.setValue(text);
-				}
-			});
+			access(() -> label.setValue(text));
 		}
 	}
 }
